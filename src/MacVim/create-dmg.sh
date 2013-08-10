@@ -5,14 +5,16 @@
 # Directory with source files (MacVim.app, Readme.txt, mvim)
 SOURCE="build/Release/"
 
+rm -rf $SOURCE/PSMTabBarControl.framework
+
 # MacVim version
-VERSION="7.4a.035"
+VERSION="7.4"
 
 # Volume title (i.e. application name)
 TITLE="MacVim ${VERSION}"
 
 # Background image
-BGIMAGE='./support/background.png'
+BGIMAGE='support/background.png'
 
 # Volume icon
 ICON="${SOURCE}/MacVim.app/Contents/Resources/MacVim.icns"
