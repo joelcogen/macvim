@@ -303,10 +303,18 @@ set_indent(size, flags)
 	ml_replace(curwin->w_cursor.lnum, newline, FALSE);
 	if (flags & SIN_CHANGED)
 	    changed_bytes(curwin->w_cursor.lnum, 0);
-	/* Correct saved cursor position if it's after the indent. */
-	if (saved_cursor.lnum == curwin->w_cursor.lnum
-				&& saved_cursor.col >= (colnr_T)(p - oldline))
-	    saved_cursor.col += ind_len - (colnr_T)(p - oldline);
+	/* Correct saved cursor position if it is in this line. */
+	if (saved_cursor.lnum == curwin->w_cursor.lnum)
+	{
+	    if (saved_cursor.col >= (colnr_T)(p - oldline))
+		/* cursor was after the indent, adjust for the number of
+		 * bytes added/removed */
+		saved_cursor.col += ind_len - (colnr_T)(p - oldline);
+	    else if (saved_cursor.col >= (colnr_T)(s - newline))
+		/* cursor was in the indent, and is now after it, put it back
+		 * at the start of the indent (replacing spaces with TAB) */
+		saved_cursor.col = (colnr_T)(s - newline);
+	}
 	retval = TRUE;
     }
     else
@@ -1581,9 +1589,9 @@ theend:
 
 #if defined(FEAT_COMMENTS) || defined(PROTO)
 /*
- * get_leader_len() returns the length of the prefix of the given string
- * which introduces a comment.	If this string is not a comment then 0 is
- * returned.
+ * get_leader_len() returns the length in bytes of the prefix of the given
+ * string which introduces a comment.  If this string is not a comment then
+ * 0 is returned.
  * When "flags" is not NULL, it is set to point to the flags of the recognized
  * comment leader.
  * "backward" must be true for the "O" command.
@@ -9180,6 +9188,8 @@ prepare_to_exit()
 /*
  * Preserve files and exit.
  * When called IObuff must contain a message.
+ * NOTE: This may be called from deathtrap() in a signal handler, avoid unsafe
+ * functions, such as allocating memory.
  */
     void
 preserve_exit()
@@ -9202,7 +9212,7 @@ preserve_exit()
     {
 	if (buf->b_ml.ml_mfp != NULL && buf->b_ml.ml_mfp->mf_fname != NULL)
 	{
-	    OUT_STR(_("Vim: preserving files...\n"));
+	    OUT_STR("Vim: preserving files...\n");
 	    screen_start();	    /* don't know where cursor is now */
 	    out_flush();
 	    ml_sync_all(FALSE, FALSE);	/* preserve all swap files */
@@ -9212,7 +9222,7 @@ preserve_exit()
 
     ml_close_all(FALSE);	    /* close all memfiles, without deleting */
 
-    OUT_STR(_("Vim: Finished.\n"));
+    OUT_STR("Vim: Finished.\n");
 
     getout(1);
 }

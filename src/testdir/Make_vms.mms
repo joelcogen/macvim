@@ -4,7 +4,7 @@
 # Authors:	Zoltan Arpadffy, <arpadffy@polarhome.com>
 #		Sandor Kopanyi,  <sandor.kopanyi@mailbox.hu>
 #
-# Last change:  2013 Jul 09
+# Last change:  2013 Sep 19
 #
 # This has been tested on VMS 6.2 to 8.3 on DEC Alpha, VAX and IA64.
 # Edit the lines in the Configuration section below to select.
@@ -37,7 +37,7 @@
 # and directory handling.
 # WANT_WIN = YES
 
-# Comment out if you want to run spell checker tests. 
+# Comment out if you want to run spell checker tests.
 # They fail because VMS does not support file names.
 # WANT_SPELL = YES
 
@@ -76,13 +76,9 @@ SCRIPT = test1.out  test2.out  test3.out  test4.out  test5.out  \
 	 test66.out test67.out test68.out test69.out \
 	 test71.out test72.out test74.out test75.out test76.out \
 	 test77.out test78.out test79.out test80.out test81.out \
-<<<<<<< HEAD
-	 test82.out
-=======
 	 test82.out test83.out test84.out test88.out test89.out \
 	 test90.out test91.out test92.out test93.out test94.out \
-	 test95.out test96.out test97.out test98.out
->>>>>>> af9e2355e31265cf9ad2e6e3e10e621f8635b65b
+	 test95.out test96.out test97.out test98.out test99.out
 
 # Known problems:
 # Test 30: a problem around mac format - unknown reason
@@ -110,11 +106,11 @@ SCRIPT_WIN = test50.out test52.out
 .ENDIF
 
 .IFDEF WANT_SPELL
-SCRIPT_SPELL = test58.out test59.out 
+SCRIPT_SPELL = test58.out test59.out
 .ENDIF
 
 .IFDEF WANT_MZSCH
-SCRIPT_MZSCH = test70.out 
+SCRIPT_MZSCH = test70.out
 .ENDIF
 
 .IFDEF HAVE_GZIP
@@ -137,13 +133,13 @@ SCRIPT_GDIFF = test47.out
 	-@ create/term/wait/nodetach mcr $(VIMPROG) $(GUI_OPTION) -u vms.vim --noplugin -s dotest.in $*.in
 	-@ !analyse the result
 	-@ directory /size/date test.out
-	-@ if "''F$SEARCH("test.out.*")'" .NES. "" then rename/nolog test.out $*.out 
+	-@ if "''F$SEARCH("test.out.*")'" .NES. "" then rename/nolog test.out $*.out
 	-@ if "''F$SEARCH("$*.out.*")'"   .NES. "" then differences /par $*.out $*.ok;
 	-@ !clean up after the test
 	-@ if "''F$SEARCH("Xdotest.*")'"  .NES. "" then delete/noconfirm/nolog Xdotest.*.*
 
 all : clean nolog $(START_WITH) $(SCRIPT) $(SCRIPT_GUI) $(SCRIPT_UNIX) $(SCRIPT_WIN) $(SCRIPT_SPELL) $(SCRIPT_GZIP) \
-    $(SCRIPT_GDIFF) $(SCRIPT_MZSCH) nolog 
+    $(SCRIPT_GDIFF) $(SCRIPT_MZSCH) nolog
 	-@ write sys$output " "
 	-@ write sys$output "-----------------------------------------------"
 	-@ write sys$output "                All done"
